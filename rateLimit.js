@@ -1,9 +1,19 @@
 const { Octokit } = require('@octokit/rest');
 
 /**
+ * Calcula o percentual de uso
+ * @param {number} used - Número de requisições usadas
+ * @param {number} limit - Limite total de requisições
+ * @returns {string} Percentual formatado
+ */
+function calcularPercentualUsado(used, limit) {
+    return ((used / limit) * 100).toFixed(2) + '%';
+}
+
+/**
  * Obtém informações sobre os rate limits da API do GitHub para um usuário específico
  * @param {string} token - Personal Access Token (PAT) do GitHub
- * @returns {Promise<Object>} Informações detalhadas sobre os rate limits
+ * @returns {Promise<Object>} Informações detalhadas sobre os rate limits (usuario, resources)
  */
 async function checkRateLimit(token) {
     if (!token) {
@@ -29,31 +39,30 @@ async function checkRateLimit(token) {
                     remaining: data.resources.core.remaining,
                     reset: new Date(data.resources.core.reset * 1000).toISOString(),
                     used: data.resources.core.used,
-                    percentual_usado: ((data.resources.core.used / data.resources.core.limit) * 100).toFixed(2) + '%'
+                    percentual_usado: calcularPercentualUsado(data.resources.core.used, data.resources.core.limit)
                 },
                 search: {
                     limit: data.resources.search.limit,
                     remaining: data.resources.search.remaining,
                     reset: new Date(data.resources.search.reset * 1000).toISOString(),
                     used: data.resources.search.used,
-                    percentual_usado: ((data.resources.search.used / data.resources.search.limit) * 100).toFixed(2) + '%'
+                    percentual_usado: calcularPercentualUsado(data.resources.search.used, data.resources.search.limit)
                 },
                 graphql: {
                     limit: data.resources.graphql.limit,
                     remaining: data.resources.graphql.remaining,
                     reset: new Date(data.resources.graphql.reset * 1000).toISOString(),
                     used: data.resources.graphql.used,
-                    percentual_usado: ((data.resources.graphql.used / data.resources.graphql.limit) * 100).toFixed(2) + '%'
+                    percentual_usado: calcularPercentualUsado(data.resources.graphql.used, data.resources.graphql.limit)
                 },
                 integration_manifest: {
                     limit: data.resources.integration_manifest.limit,
                     remaining: data.resources.integration_manifest.remaining,
                     reset: new Date(data.resources.integration_manifest.reset * 1000).toISOString(),
                     used: data.resources.integration_manifest.used,
-                    percentual_usado: ((data.resources.integration_manifest.used / data.resources.integration_manifest.limit) * 100).toFixed(2) + '%'
+                    percentual_usado: calcularPercentualUsado(data.resources.integration_manifest.used, data.resources.integration_manifest.limit)
                 }
-            },
-            rate: data.rate
+            }
         };
     } catch (error) {
         if (error.status === 401) {
