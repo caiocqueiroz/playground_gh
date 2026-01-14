@@ -16,10 +16,10 @@ async function checkRateLimit(token) {
         });
 
         // Obtém informações do rate limit
-        const { data } = await octokit.rateLimit.get();
+        const { data } = await octokit.rest.rateLimit.get();
 
         // Obtém informações do usuário autenticado
-        const { data: user } = await octokit.users.getAuthenticated();
+        const { data: user } = await octokit.rest.users.getAuthenticated();
 
         return {
             usuario: user.login,
